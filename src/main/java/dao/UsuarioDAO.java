@@ -14,20 +14,26 @@ public class UsuarioDAO {
 
     public void save(Usuario usuario) {
         jpaUtil.getEntityManager().getTransaction().begin();
-        jpaUtil.getEntityManager().merge(usuario);
+        jpaUtil.getEntityManager().persist(usuario);
         jpaUtil.getEntityManager().getTransaction().commit();
         jpaUtil.getEntityManager().close();
     }
 
-    public  Usuario getUserById(Long id) {
+    public Usuario getUserById(Long id) {
         jpaUtil.getEntityManager().getTransaction().begin();
         return jpaUtil.getEntityManager().find(Usuario.class, id);
+    }
+
+    public Usuario getUsuarioByCpf(String cpf) {
+        jpaUtil.getEntityManager().getTransaction().begin();
+        var query = jpaUtil.getEntityManager().createNamedQuery("usuario.getByCpf");
+        query.setParameter("cpf", cpf);
+        return (Usuario) query.getSingleResult();
     }
 
     public List<Usuario> getAllUsers() {
         jpaUtil.getEntityManager().getTransaction().begin();
         var query = jpaUtil.getEntityManager().createNamedQuery("usuario.getAll");
-
         return query.getResultList();
     }
 
@@ -35,6 +41,7 @@ public class UsuarioDAO {
         var user = getUserById(id);
         jpaUtil.getEntityManager().getTransaction().begin();
         jpaUtil.getEntityManager().remove(user);
-        return "Usuário: " + user.getNome() + "excluído com sucesso!";
+        jpaUtil.getEntityManager().getTransaction().commit();
+        return "Usuário: " + user.getNome() + " excluído com sucesso!";
     }
 }

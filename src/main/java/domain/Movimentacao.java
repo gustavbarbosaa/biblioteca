@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -14,6 +15,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@NamedQueries({
+        @NamedQuery(name = "movimentacao.getAll", query = "SELECT m FROM Movimentacao m")
+})
 public class Movimentacao {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,9 +31,9 @@ public class Movimentacao {
     @JoinColumn(name = "livro_id", referencedColumnName = "id")
     private Livro livro;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private LocalDateTime dataEmprestimo;
-    @Column(nullable = false)
+    @Column(nullable = true)
     private LocalDateTime dataDevolucao;
     private BigDecimal valorMulta;
 }

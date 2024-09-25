@@ -14,6 +14,10 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@NamedQueries({
+        @NamedQuery(name = "livro.getAll", query = "SELECT l FROM Livro l"),
+        @NamedQuery(name = "livro.getByTitulo", query = "SELECT l FROM Livro l WHERE l.titulo = :titulo")
+})
 public class Livro {
 
     @Id
@@ -31,4 +35,6 @@ public class Livro {
     private String editora;
     @Column(nullable = false)
     private String edicao;
+    @Column(nullable = false)
+    private String categoria;
 }
