@@ -1,9 +1,7 @@
 import dao.LivroDAO;
-import dao.MovimentacaoDAO;
 import dao.UsuarioDAO;
 import domain.Endereco;
 import domain.Livro;
-import domain.Movimentacao;
 import domain.Usuario;
 import services.MovimentacaoService;
 

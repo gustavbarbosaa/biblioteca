@@ -18,7 +18,6 @@ public class MovimentacaoDAO {
     }
 
     public Movimentacao getMovimentacaoById(Long id) {
-//        this.jpaUtil.getEntityManager().getTransaction().begin();
         return this.jpaUtil.getEntityManager().find(Movimentacao.class, id);
     }
 
