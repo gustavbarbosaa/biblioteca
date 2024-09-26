@@ -3,6 +3,7 @@ package services;
 import dao.LivroDAO;
 import dao.MovimentacaoDAO;
 import dao.UsuarioDAO;
+
 import domain.Livro;
 import domain.Movimentacao;
 import domain.Usuario;
@@ -51,8 +52,14 @@ public class MovimentacaoService {
             if (prazo.isBefore(LocalDateTime.now())) {
                 Period diferenca = Period.between(prazo.toLocalDate(), dataAtual.toLocalDate());
 
+                int totalDias = diferenca.getYears() * 365 + diferenca.getMonths() * 30 + diferenca.getDays();
+
                 System.out.println("Prazo já expirou!");
-                System.out.printf("Diferença: " + diferenca);
+                System.out.println("Diferença total em dias: " + totalDias);
+                double valorMulta = 1.00 * totalDias;
+                movimentacao.setDataEmprestimo(LocalDateTime.now());
+                movimentacao.setValorMulta(BigDecimal.valueOf(valorMulta));
+                movimentacaoDAO.save(movimentacao);
             } else {
                 System.out.println("O livro ainda está no prazo de 3 dias!");
             }
@@ -60,5 +67,15 @@ public class MovimentacaoService {
             System.out.println("Livro já foi devolvido");
             System.out.println("Data de devolução: " + movimentacao.getDataDevolucao());
         }
+    }
+
+    public void verificaMovimentacoesSemDevolucao() {
+        var movimentacoesSemDevolucao = movimentacaoDAO.getMovimentacoesSemDevolucao();
+
+        movimentacoesSemDevolucao.forEach(m -> {
+            if (m.getDataEmprestimo().plusDays(3).isBefore(LocalDateTime.now())) {
+                System.out.println(m.getUsuario().getNome() + " tem uma movimentacao em atraso com o livro: " + m.getLivro().getTitulo());
+            }
+        });
     }
 }

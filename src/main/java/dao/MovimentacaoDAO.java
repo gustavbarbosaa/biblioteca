@@ -3,6 +3,7 @@ package dao;
 import domain.Movimentacao;
 import persistence.JPAUtil;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class MovimentacaoDAO {
@@ -14,16 +15,23 @@ public class MovimentacaoDAO {
         this.jpaUtil.getEntityManager().getTransaction().begin();
         this.jpaUtil.getEntityManager().merge(movimentacao);
         this.jpaUtil.getEntityManager().getTransaction().commit();
-        this.jpaUtil.getEntityManager().close();
+//        this.jpaUtil.getEntityManager().close();
     }
 
     public Movimentacao getMovimentacaoById(Long id) {
+//        this.jpaUtil.getEntityManager().getTransaction().begin();
         return this.jpaUtil.getEntityManager().find(Movimentacao.class, id);
     }
 
     public List<Movimentacao> getAllMovimentacoes() {
         this.jpaUtil.getEntityManager().getTransaction().begin();
         var query = this.jpaUtil.getEntityManager().createNamedQuery("movimentacao.getAll");
+        return query.getResultList();
+    }
+
+    public List<Movimentacao> getMovimentacoesSemDevolucao() {
+        this.jpaUtil.getEntityManager().getTransaction().begin();
+        var query = this.jpaUtil.getEntityManager().createNamedQuery("movimentacao.getMovimentacaoSemDevolucao");
         return query.getResultList();
     }
 }

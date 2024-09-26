@@ -14,7 +14,7 @@ import javax.persistence.*;
 @Builder
 @NamedQueries({
         @NamedQuery(name = "usuario.getAll", query = "SELECT u FROM Usuario u"),
-        @NamedQuery(name = "usuario.getByCpf", query = "SELECT u FROM Usuario u where u.cpf = :cpf")
+        @NamedQuery(name = "usuario.getByCpf", query = "SELECT u FROM Usuario u where u.cpf = :cpf"),
 })
 public class Usuario {
 

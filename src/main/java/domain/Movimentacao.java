@@ -16,7 +16,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @NamedQueries({
-        @NamedQuery(name = "movimentacao.getAll", query = "SELECT m FROM Movimentacao m")
+        @NamedQuery(name = "movimentacao.getAll", query = "SELECT m FROM Movimentacao m"),
+        @NamedQuery(name = "movimentacao.getMovimentacaoSemDevolucao", query = "SELECT m FROM Movimentacao m WHERE m.dataDevolucao is NULL"),
+
 })
 public class Movimentacao {
     @Id

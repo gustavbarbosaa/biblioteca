@@ -44,4 +44,10 @@ public class UsuarioDAO {
         jpaUtil.getEntityManager().getTransaction().commit();
         return "Usuário: " + user.getNome() + " excluído com sucesso!";
     }
+
+    public List<Usuario> usuariosComEmprestimoEmAberto() {
+        jpaUtil.getEntityManager().getTransaction().begin();
+        var query = jpaUtil.getEntityManager().createNamedQuery("usuario.getEmprestimoPendente");
+        return query.getResultList();
+    }
 }
