@@ -3,56 +3,70 @@ import dao.MovimentacaoDAO;
 import dao.UsuarioDAO;
 import domain.Endereco;
 import domain.Livro;
-import domain.Movimentacao;
 import domain.Usuario;
 import services.MovimentacaoService;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         var usuarioDAO = new UsuarioDAO();
         var livroDAO = new LivroDAO();
         var movimentacaoDAO = new MovimentacaoDAO();
         var movimentacaoService = new MovimentacaoService();
 
         var endereco = Endereco.builder()
-                .rua("opa")
-                .bairro("opa2")
-                .numero("1234")
-                .cidade("cajazeiras")
+                .rua("jardim europa")
+                .bairro("soledade")
+                .numero("333")
+                .cidade("Cajazeiras")
                 .cep("58900000")
                 .estado("PB")
                 .build();
 
         var usuario = Usuario.builder()
                 .nome("gustavo")
-                .cpf("1234")
-                .email("gustavo@gmail.com")
-                .telefone("12344356")
+                .cpf("777")
+                .email("gugu@gmail.com")
+                .telefone("12355")
                 .tipoUsuario("aluno")
                 .endereco(endereco)
                 .build();
 
-//        usuarioDAO.save(usuario);
-
         var livro = Livro.builder()
-                .titulo("testando")
-                .genero("testando")
-                .edicao("4")
-                .escritor("testando")
-                .editora("testando")
-                .categoria("testando")
+                .titulo("Teste2")
+                .genero("Teste2")
+                .edicao("333")
+                .escritor("hdfugihdpu")
+                .editora("hdfugihdpu")
+                .categoria("categoria")
                 .dataPublicacao(LocalDateTime.now())
                 .build();
 
+//        usuarioDAO.save(usuario);
 //        livroDAO.save(livro);
-
 //        movimentacaoService.saveMovimentacao(usuario, livro);
+//
+//        // Query 1
+//        movimentacaoService.verificaMulta(3L);
+//        movimentacaoService.verificaMovimentacoesSemDevolucao();
 
-        movimentacaoService.verificaMulta(1L);
 
-        movimentacaoService.verificaMovimentacoesSemDevolucao();
+//        // Query 2
+//        var livrosPorCategoria = livroDAO.getLivroByCategoria("teste");
+//        livrosPorCategoria.forEach(l -> System.out.println(l.getTitulo()));
+
+//        // Query 3
+//        System.out.println(movimentacaoDAO.getMaiorMulta());
+
+//        // Query 4
+//        movimentacaoService.movimentacoesComAtraso();
+//
+//        // Query 5
+//        int mes = 8;
+//        int ano = 2024;
+//        Long quantidadeMovimentacoes = movimentacaoDAO.getQtdMovimentacaoMensal(mes, ano);
+//        System.out.println("Quantidade de movimentações no mês " + mes + "/" + ano + ": " + quantidadeMovimentacoes);
     }
+
 }

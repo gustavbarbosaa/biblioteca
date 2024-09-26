@@ -12,7 +12,7 @@ public class LivroDAO {
 
     public void save(Livro livro) {
         jpaUtil.getEntityManager().getTransaction().begin();
-        jpaUtil.getEntityManager().persist(livro);
+        jpaUtil.getEntityManager().merge(livro);
         jpaUtil.getEntityManager().getTransaction().commit();
         jpaUtil.getEntityManager().close();
     }
@@ -34,4 +34,13 @@ public class LivroDAO {
         var query = jpaUtil.getEntityManager().createNamedQuery("livro.getAll");
         return query.getResultList();
     }
+
+    public List<Livro> getLivroByCategoria(String categoria){
+        jpaUtil.getEntityManager().getTransaction().begin();
+        var query = jpaUtil.getEntityManager().createNamedQuery("livro.getByCategoria");
+        query.setParameter("categoria",categoria);
+        return query.getResultList();
+    }
+
+
 }

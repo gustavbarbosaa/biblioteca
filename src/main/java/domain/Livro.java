@@ -16,7 +16,8 @@ import java.util.Date;
 @Builder
 @NamedQueries({
         @NamedQuery(name = "livro.getAll", query = "SELECT l FROM Livro l"),
-        @NamedQuery(name = "livro.getByTitulo", query = "SELECT l FROM Livro l WHERE l.titulo = :titulo")
+        @NamedQuery(name = "livro.getByTitulo", query = "SELECT l FROM Livro l WHERE l.titulo = :titulo"),
+        @NamedQuery(name= "livro.getByCategoria", query= "SELECT l from Livro l WHERE l.categoria = :categoria")
 })
 public class Livro {
 

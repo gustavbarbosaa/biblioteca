@@ -17,8 +17,13 @@ import java.time.LocalDateTime;
 @Builder
 @NamedQueries({
         @NamedQuery(name = "movimentacao.getAll", query = "SELECT m FROM Movimentacao m"),
-        @NamedQuery(name = "movimentacao.getMovimentacaoSemDevolucao", query = "SELECT m FROM Movimentacao m WHERE m.dataDevolucao is NULL"),
-
+        @NamedQuery(name = "movimentacao.getMaiorMulta", query = "SELECT m.usuario FROM Movimentacao m WHERE m.valorMulta " +
+                "= (SELECT MAX(m2.valorMulta) FROM Movimentacao m2)"),
+        @NamedQuery(
+                name = "movimentacao.getQtdMovimentacaoMensal",
+                query = "SELECT COUNT(m) FROM Movimentacao m WHERE FUNCTION('MONTH', m.dataEmprestimo) = :mes AND FUNCTION('YEAR', m.dataEmprestimo) = :ano"
+        ),
+        @NamedQuery(name = "movimentacao.getMovimentacoesSemDevolucao", query = "SELECT m FROM Movimentacao m WHERE m.dataDevolucao is NULL")
 })
 public class Movimentacao {
     @Id

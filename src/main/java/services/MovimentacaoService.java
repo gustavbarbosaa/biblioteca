@@ -7,6 +7,7 @@ import dao.UsuarioDAO;
 import domain.Livro;
 import domain.Movimentacao;
 import domain.Usuario;
+import net.bytebuddy.implementation.bytecode.Throw;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -29,53 +30,85 @@ public class MovimentacaoService {
         var verificaUsuario = this.usuarioDAO.getUsuarioByCpf(usuario.getCpf());
         var verificaLivro = this.livroDAO.getLivroByTitulo(livro.getTitulo());
 
+        System.out.println(verificaUsuario);
+        System.out.println(verificaLivro);
+
         if (verificaUsuario == null || verificaLivro == null) {
             throw new IllegalArgumentException("Usuário ou livro não existem no banco de dados");
         }
 
-        movimentacao.setUsuario(usuario);
-        movimentacao.setLivro(livro);
+        movimentacao.setUsuario(verificaUsuario);
+        movimentacao.setLivro(verificaLivro);
 
         movimentacao.setDataEmprestimo(LocalDateTime.now());
         movimentacao.setDataDevolucao(null);
         movimentacao.setValorMulta(BigDecimal.ZERO);
+
         movimentacaoDAO.save(movimentacao);
     }
 
-    public void verificaMulta(Long id) {
+    public void verificaMulta(Long id) throws Exception {
         var movimentacao = movimentacaoDAO.getMovimentacaoById(id);
 
-        if (movimentacao.getDataDevolucao() == null) {
-            LocalDateTime prazo = movimentacao.getDataEmprestimo().plusDays(3);
-            LocalDateTime dataAtual = LocalDateTime.now();
-
-            if (prazo.isBefore(LocalDateTime.now())) {
-                Period diferenca = Period.between(prazo.toLocalDate(), dataAtual.toLocalDate());
-
-                int totalDias = diferenca.getYears() * 365 + diferenca.getMonths() * 30 + diferenca.getDays();
-
-                System.out.println("Prazo já expirou!");
-                System.out.println("Diferença total em dias: " + totalDias);
-                double valorMulta = 1.00 * totalDias;
-                movimentacao.setDataEmprestimo(LocalDateTime.now());
-                movimentacao.setValorMulta(BigDecimal.valueOf(valorMulta));
-                movimentacaoDAO.save(movimentacao);
-            } else {
-                System.out.println("O livro ainda está no prazo de 3 dias!");
-            }
-        } else {
-            System.out.println("Livro já foi devolvido");
-            System.out.println("Data de devolução: " + movimentacao.getDataDevolucao());
+        if (movimentacao == null) {
+            throw new Exception("Movimentacao nao foi encontrada");
         }
+
+        LocalDateTime prazo = movimentacao.getDataEmprestimo().plusDays(3);
+        LocalDateTime dataAtual = LocalDateTime.now();
+
+
+        if (prazo.isBefore(LocalDateTime.now())) {
+            Period diferenca = Period.between(prazo.toLocalDate(), dataAtual.toLocalDate());
+            int totalDias = diferenca.getYears() * 365 + diferenca.getMonths() * 30 + diferenca.getDays();
+            double valorMulta = 1.00 * totalDias;
+            movimentacao.setValorMulta(BigDecimal.valueOf(valorMulta));
+            movimentacao.setDataDevolucao(LocalDateTime.now());
+            movimentacaoDAO.save(movimentacao);
+            System.out.println(
+                movimentacao.getUsuario().getNome() +
+                " está com o livro: " +
+                movimentacao.getLivro().getTitulo() +
+                " com " + totalDias + " dias de atraso"
+            );
+        } else {
+            System.out.println("O livro ainda está no prazo de 3 dias!");
+            movimentacao.setDataEmprestimo(LocalDateTime.now());
+            movimentacaoDAO.save(movimentacao);
+        }
+    }
+
+    public void movimentacoesComAtraso() {
+        var movimentacoesSemDevolucao = movimentacaoDAO.getMovimentacoesSemDevolucao();
+
+        if (movimentacoesSemDevolucao.size() <= 0) {
+            System.out.println("Não existem movimentacoes com atraso!");
+        } else {
+            System.out.println("Movimentações com atraso:");
+        }
+
+        movimentacoesSemDevolucao.forEach(m ->
+                System.out.println(
+                    m.getId() +
+                    m.getUsuario().getNome() + m.getUsuario().getCpf() +
+                    m.getLivro().getTitulo()
+                )
+        );
     }
 
     public void verificaMovimentacoesSemDevolucao() {
         var movimentacoesSemDevolucao = movimentacaoDAO.getMovimentacoesSemDevolucao();
 
-        movimentacoesSemDevolucao.forEach(m -> {
-            if (m.getDataEmprestimo().plusDays(3).isBefore(LocalDateTime.now())) {
-                System.out.println(m.getUsuario().getNome() + " tem uma movimentacao em atraso com o livro: " + m.getLivro().getTitulo());
-            }
-        });
+        if (movimentacoesSemDevolucao.isEmpty()) {
+            System.out.println("Não tem movimentacoes com atraso");
+        } else {
+            movimentacoesSemDevolucao.forEach(m -> {
+                if (m.getDataEmprestimo().plusDays(3).isBefore(LocalDateTime.now())) {
+                    System.out.println(m.getUsuario().getNome() + " ---->" + " Data emprestimo: " + m.getDataEmprestimo().toLocalDate());
+                } else {
+                    System.out.println("Periodo ainda é valido");
+                }
+            });
+        }
     }
 }
